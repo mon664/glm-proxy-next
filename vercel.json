@@ -2,8 +2,5 @@
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
-  "framework": "nextjs",
-  "env": {
-    "GLM_API_KEY": "@glm_api_key"
-  }
+  "framework": "nextjs"
 }
