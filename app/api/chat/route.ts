@@ -1,4 +1,5 @@
 // app/api/chat/route.ts - GLM Chat Completion Proxy
+// 무료 Groq API 사용 (Llama 3.3 70B)
 
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -7,25 +8,26 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { model, messages, temperature, max_tokens } = body;
 
-    // 환경 변수에서 API 키 가져오기
-    const API_KEY = process.env.GLM_API_KEY;
+    // Groq API (무료, 매우 빠름)
+    // https://groq.com
+    const GROQ_API_KEY = process.env.GROQ_API_KEY || 'gsk_';
 
-    if (!API_KEY) {
+    if (!GROQ_API_KEY || GROQ_API_KEY === 'gsk_') {
       return NextResponse.json(
-        { error: 'API 키가 설정되지 않았습니다. 서버 관리자에게 문의하세요.' },
+        { error: 'Groq API 키가 설정되지 않았습니다.' },
         { status: 500 }
       );
     }
 
-    // Z.ai GLM API 호출
-    const response = await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions', {
+    // Groq API 호출 (Llama 3.3 70B - 무료)
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${API_KEY}`
+        'Authorization': `Bearer ${GROQ_API_KEY}`
       },
       body: JSON.stringify({
-        model: model || 'glm-4.7',
+        model: 'llama-3.3-70b-versatile', // 또는 'mixtral-8x7b-32768'
         messages: messages || [],
         temperature: temperature || 0.7,
         max_tokens: max_tokens || 4096
